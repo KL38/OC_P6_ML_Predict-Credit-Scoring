@@ -132,6 +132,11 @@ Réalisée dans `notebooks/Optimisation.ipynb` — expérience `OC_P6_optimisati
 | `reg_alpha` | 6.93 |
 | `reg_lambda` | 0.47 |
 
+**Seuil optimal final**
+ evalué à 0.335
+
+![Seuil](seuil.png)
+
 **Évaluation sur X-test** (holdout 20%, seuil optimal OOF)
 
 | Métrique | Valeur | 
@@ -142,11 +147,6 @@ Réalisée dans `notebooks/Optimisation.ipynb` — expérience `OC_P6_optimisati
 | Precision | 0.20 |
 | Fbeta (β=1.5) | 0.39 |
 | Coût métier | 29 678 |
-
-**Seuil optimal final**
- evalué à 0.335
-
-![Seuil](seuil.png)
 
 
 **Modèle enregistré** dans MLflow Model Registry sous `lgbm_credit_scoring`.

@@ -18,7 +18,7 @@ notebooks/
   Optimisation.ipynb     # Optimisation LGBM avec Optuna — experiment "OC_P6_optimisation"
 mlartifacts/             # Artefacts MLflow
 mlflow.db                # Base MLflow locale
-presentation.md          # Support de présentation projet (à compléter avec métriques full dataset)
+presentation.md          # Support de présentation projet — complété avec toutes les métriques
 ```
 
 ## Données
@@ -125,19 +125,24 @@ Dédié uniquement à LGBM. Experiment MLflow : `OC_P6_optimisation`.
 5. Réouverture de la run → log des 5 artefacts HTML + métriques test
 6. `mlflow.register_model(...)` → registry `lgbm_credit_scoring`
 
-### Pour le run full dataset
-- `use_reduced = False`
+### Pour le run full dataset — **FAIT**
+- `use_reduced = False`, `N_TRIALS = 100`
 - Run name : `lgbm_optuna_best_full` (tag `dataset=full`)
-- `N_TRIALS = 100`
-- Filtre MLflow à adapter : `"tags.mlflow.runName = 'lgbm_optuna_best_full'"`
-- `mlflow.register_model(...)` → crée automatiquement **Version 2** de `lgbm_credit_scoring`
+- Filtre MLflow : `"tags.mlflow.runName = 'lgbm_optuna_best_full'"`
+- `mlflow.register_model(f"runs:/{best_run_id}/lgbm_optuna_best_full", "lgbm_credit_scoring")` → **Version 2**
+- **Bug connu** : l'artifact_path dans `register_model` doit correspondre au `model_name` passé à `run_cv`. Pour le run full, c'est `lgbm_optuna_best_full` (pas `lgbm_optuna_best`).
+
+### Résultats finaux (full dataset)
+- CV : ROC-AUC=0.79, Recall=0.68, Fbeta=0.39, Cost=23 869
+- X_test (seuil OOF=0.333) : ROC-AUC=0.79, Recall=0.71, Precision=0.18, Fbeta=0.38, Cost=29 678
+- Meilleurs params Optuna : `num_leaves=264, learning_rate=0.0143, n_estimators=773, min_child_samples=83, subsample=0.877, colsample_bytree=0.802, reg_alpha=6.93, reg_lambda=0.47`
 
 ## Roadmap / Prochaines étapes
 
 1. ~~**Sample weights**~~ — **Fait** : `use_sample_weights=True` implémenté dans `run_cv`. Runs : `lgbm_sw_full`, `xgb_sw_full`, `log_reg_sw_full`, `rf_sw_full` (tag `phase=sample_weights`)
 2. ~~**Threshold optimisation**~~ — **Fait** : `optimize_threshold=True` dans `run_cv`, seuil trouvé par fold sur val set (CV-aware, pas de leakage X_test). Runs : `lgbm_thr_full`, `xgb_thr_full`, `log_reg_thr_full`, `rf_thr_full`, `mlp_thr_full` (tag `phase=threshold_opt`). MLP inclus mais sans sample_weight.
 3. ~~**Optuna sur dataset réduit**~~ — **Fait** : `notebooks/Optimisation.ipynb`, 50 trials, experiment `OC_P6_optimisation`. Run `lgbm_ini` (baseline) puis `lgbm_optuna_best` (meilleure trial + 5 artefacts HTML + métriques X_test + modèle enregistré sous `lgbm_credit_scoring` dans le Model Registry).
-4. **Optuna sur full dataset** — relancer avec `use_reduced=False` et `N_TRIALS=100+` pour les résultats définitifs.
+4. ~~**Optuna sur full dataset**~~ — **Fait** : run `lgbm_optuna_best_full`, 100 trials, modèle enregistré sous `lgbm_credit_scoring` Version 2. X_test : ROC-AUC=0.79, Recall=0.71, Cost=29 678.
 
 ## Commandes utiles
 ```bash
