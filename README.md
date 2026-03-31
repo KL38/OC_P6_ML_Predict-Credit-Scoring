@@ -6,12 +6,15 @@
 ## 1. Contexte & Objectif
 
 **Contexte métier**
+
 Home Credit est une institution financière qui accorde des prêts à des clients divers. L'enjeu est double : ne pas refuser des bons clients, mais ne pas accorder de prêts à des clients qui sont susceptibles de faire défaut.
 
 **Objectif**
+
 Prédire la probabilité de défaut de remboursement d'un client (`TARGET = 1`).
 
 **Contrainte métier**
+
 Un faux négatif (défaut non détecté) coûte 10× plus qu'un faux positif (bon client refusé) :
 
 ```
@@ -61,6 +64,7 @@ Résultat : **~770 colonnes** après merge des 8 sources.
 Expérience `"First trial"` dans MLflow — 5 modèles évalués en cross-validation stratifiée 5 folds avec sample weights et optimisation du seuil.
 
 **Protocole**
+
 - Cross-validation stratifiée 5 folds
 - `compute_sample_weight("balanced")` pour compenser le déséquilibre
 - Seuil optimal par fold (maximise Fbeta β=1.5, recall favorisé)
@@ -84,6 +88,7 @@ Expérience `"First trial"` dans MLflow — 5 modèles évalués en cross-valida
 Réalisée dans `notebooks/Optimisation.ipynb` — expérience `OC_P6_optimisation`.
 
 **Approche**
+
 - **Optuna** : recherche bayésienne des hyperparamètres (50 trials sur dataset réduit, 100+ sur full)
 - À chaque trial : 5-fold CV + recherche du seuil optimal sur chaque fold de validation
 - Objectif Optuna : **minimiser le coût métier** `10×FN + FP`
@@ -102,6 +107,7 @@ Réalisée dans `notebooks/Optimisation.ipynb` — expérience `OC_P6_optimisati
 | `reg_alpha` / `reg_lambda` | 1e-8 – 10 (log) |
 
 **Artefacts loggés dans MLflow**
+
 - Courbe d'optimisation Optuna
 - Importance des hyperparamètres
 - Courbe coût vs. seuil (OOF sur X_train)
@@ -126,16 +132,21 @@ Réalisée dans `notebooks/Optimisation.ipynb` — expérience `OC_P6_optimisati
 | `reg_alpha` | 6.93 |
 | `reg_lambda` | 0.47 |
 
-**Évaluation sur X_test** (holdout 20%, seuil optimal OOF)
+**Évaluation sur X-test** (holdout 20%, seuil optimal OOF)
 
-| Métrique | Valeur |
+| Métrique | Valeur | 
 |---|---|
 | ROC-AUC | 0.79 |
 | PR-AUC | 0.28 |
-| Recall | 0.71 |
-| Precision | 0.18 |
-| Fbeta (β=1.5) | 0.38 |
+| Recall | 0.68 |
+| Precision | 0.20 |
+| Fbeta (β=1.5) | 0.39 |
 | Coût métier | 29 678 |
+
+**Seuil optimal final**
+ evalué à 0.335
+
+![Seuil](seuil.png)
 
 
 **Modèle enregistré** dans MLflow Model Registry sous `lgbm_credit_scoring`.
@@ -152,11 +163,15 @@ Réalisée dans `notebooks/Optimisation.ipynb` — expérience `OC_P6_optimisati
 
 ---
 
-## 7. Valeur métier — Pourquoi ce modèle vaut le déploiement
+## 7. Valeur métier 
 
 ### Comparaison avec le scénario sans modèle
 
-Sans outil de scoring, une institution a deux options naïves : **approuver tout le monde** (maximiser le revenu, mais subir tous les défauts) ou **refuser sur critères grossiers** (mal calibré, perte de bons clients).
+Sans outil de scoring, une institution a deux options naïves : 
+
+&nbsp;&nbsp;&nbsp;**Approuver tout le monde** (maximiser le revenu, mais subir tous les défauts)
+
+&nbsp;&nbsp;&nbsp;**Refuser sur critères grossiers** (mal calibré, perte de bons clients).
 
 Sur le jeu de test (~61 000 clients, 8% de défauts soit ~4 900 défauts) :
 
