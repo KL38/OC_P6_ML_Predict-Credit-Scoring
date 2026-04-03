@@ -159,7 +159,7 @@ Réalisée dans `notebooks/Optimisation.ipynb` — expérience `OC_P6_optimisati
 
 `PAYMENT_RATE` — Engineered feature : Taux de remboursement annuel (annuité / credit total). Represente la vitesse de remboursement voulue du credit. 
 
-`EXT_SOURCE_1/2/3` — scores de crédit externes fournis par des tiers partenaires de Home Credit, normalisés entre 0 et 1. Plus le score est élevé, moins le client est risqué. Ce sont les 3 features les plus prédictives du modèle final.
+`EXT_SOURCE_1/2/3` — scores de crédit externes fournis par des tiers partenaires de Home Credit, normalisés entre 0 et 1. Plus le score est élevé, moins le client est risqué. 
 
 ---
 
