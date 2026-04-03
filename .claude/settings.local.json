@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "Skill(hookify:help)",
+      "Bash(find /c/Users/Kevin/.claude -type f -name *.js)"
     ]
   }
 }

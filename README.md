@@ -67,7 +67,7 @@ Expérience `"First trial"` dans MLflow — 5 modèles évalués en cross-valida
 
 - Cross-validation stratifiée 5 folds
 - `compute_sample_weight("balanced")` pour compenser le déséquilibre
-- Seuil optimal par fold (maximise Fbeta β=1.5, recall favorisé)
+- Seuil optimal par fold (minimise le cout metier --> recall favorisé)
 
 **Résultats comparatifs (dataset complet — sample weights + seuil optimal)**
 
